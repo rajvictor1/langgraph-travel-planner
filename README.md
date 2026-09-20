@@ -61,6 +61,8 @@ Health check: `GET /api/health`. Planning: `POST /api/plan`. Approval: `POST /ap
 
 Add an OpenAI API key to `.env` to interpret the natural-language request. Without a key, Atlas uses the editable fields, so the mock workflow remains fully usable.
 
+The OpenAI model is restricted to request interpretation with Pydantic structured output. Mock-provider search, pricing, constraints, retries and approval routing remain deterministic. Configure `OPENAI_API_KEY` and optionally `OPENAI_MODEL` (default: `gpt-4.1-mini`) as server-side environment variables; never expose the key to browser code.
+
 ## Test
 
 ```bash

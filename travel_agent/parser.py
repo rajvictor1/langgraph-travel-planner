@@ -7,21 +7,31 @@ import re
 from .models import TripRequest
 
 
-def parse_with_openai(text: str, defaults: TripRequest) -> TripRequest:
-    """Use OpenAI when configured; otherwise preserve editable form values."""
+def interpret_request(text: str, defaults: TripRequest) -> tuple[TripRequest, str]:
+    """Return structured requirements and a transparent interpretation mode."""
     if not text.strip() or not os.getenv("OPENAI_API_KEY"):
-        return defaults.model_copy(update={"raw_request": text})
+        return defaults.model_copy(update={"raw_request": text}), "editable_fields"
 
-    from langchain_openai import ChatOpenAI
+    try:
+        from langchain_openai import ChatOpenAI
 
-    model = ChatOpenAI(model=os.getenv("OPENAI_MODEL", "gpt-4.1-mini"), temperature=0)
-    structured = model.with_structured_output(TripRequest)
-    parsed = structured.invoke(
-        "Extract travel requirements. Use the supplied defaults when a field is not stated. "
-        "Never invent allergies. Budget means total-trip budget.\n"
-        f"Defaults: {json.dumps(defaults.model_dump())}\nRequest: {text}"
-    )
-    return parsed.model_copy(update={"raw_request": text})
+        model = ChatOpenAI(model=os.getenv("OPENAI_MODEL", "gpt-4.1-mini"), temperature=0)
+        structured = model.with_structured_output(TripRequest)
+        parsed = structured.invoke(
+            "Extract travel requirements into the supplied schema. Preserve a supplied default when the request "
+            "does not explicitly change it. Never invent allergies, dietary restrictions, dates, airports, or "
+            "preferences. Budget is the total-trip ceiling. Return only structured data.\n"
+            f"Editable defaults: {json.dumps(defaults.model_dump())}\nTraveller request: {text}"
+        )
+        return parsed.model_copy(update={"raw_request": text}), "openai_structured_output"
+    except Exception:
+        # The planner remains usable when the provider is unavailable or misconfigured.
+        return defaults.model_copy(update={"raw_request": text}), "editable_fields_fallback"
+
+
+def parse_with_openai(text: str, defaults: TripRequest) -> TripRequest:
+    """Backward-compatible helper used by the Streamlit interface."""
+    return interpret_request(text, defaults)[0]
 
 
 def apply_feedback(request: TripRequest, feedback: str) -> TripRequest:
@@ -42,4 +52,3 @@ def apply_feedback(request: TripRequest, feedback: str) -> TripRequest:
     elif "hotel" in lower:
         updates["stay_style"] = "hotel"
     return request.model_copy(update=updates)
-

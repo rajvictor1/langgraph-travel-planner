@@ -24,7 +24,7 @@
     </form>
   </aside>
   <main class="workspace">
-    <div class="top"><div><div class="eyebrow">Transparent travel planning</div><h1 class="headline">Plan the trip.<br><span>See every decision.</span></h1><p class="sub">A public Python LangGraph demo using mock inventory, targeted replanning and human approval.</p></div><div class="switch" role="tablist"><button id="simple" class="active" type="button">Simple</button><button id="sherlock" type="button">Sherlock</button></div></div>
+    <div class="top"><div><div class="eyebrow">Transparent travel planning</div><h1 class="headline">Plan the trip.<br><span>See every decision.</span></h1><p class="sub">OpenAI interprets the travel brief when configured; Python LangGraph controls mock search, budget checks, targeted replanning and approval.</p></div><div class="switch" role="tablist"><button id="simple" class="active" type="button">Simple</button><button id="sherlock" type="button">Sherlock</button></div></div>
     <section id="empty" class="empty">Set your requirements and create a plan. No API key is required for this deterministic mock demo.</section>
     <section id="result" class="hidden"></section>
     <section id="audit" class="hidden"></section>
@@ -41,4 +41,3 @@ $('planner').onsubmit=async e=>{e.preventDefault();const btn=$('create');btn.dis
 async function decide(approved){const feedback=$('feedback').value;if(!approved&&!feedback){$('decision-error').textContent='Describe what should change.';return}try{const r=await fetch('/api/approval',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({thread_id:threadId,approved,feedback})});if(!r.ok)throw Error((await r.json()).detail||'Decision failed');current=(await r.json()).state;render()}catch(err){$('decision-error').textContent=err.message}}
 </script>
 </body></html>
-
