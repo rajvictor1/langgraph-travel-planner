@@ -1,0 +1,12 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "rewrites": [
+    { "source": "/", "destination": "/index.html" }
+  ],
+  "functions": {
+    "api/index.py": {
+      "excludeFiles": "{tests/**,.venv/**,.superdesign/**,**/__pycache__/**,travel_agent.db*}"
+    }
+  }
+}
+

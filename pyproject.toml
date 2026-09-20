@@ -1,0 +1,14 @@
+[build-system]
+requires = ["setuptools>=75"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "atlas-travel-agent"
+version = "0.1.0"
+description = "Transparent LangGraph travel-planning learning app"
+requires-python = ">=3.12"
+
+[tool.pytest.ini_options]
+pythonpath = ["."]
+testpaths = ["tests"]
+

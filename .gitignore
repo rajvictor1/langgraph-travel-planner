@@ -1,0 +1,9 @@
+.venv/
+__pycache__/
+.pytest_cache/
+.streamlit/secrets.toml
+.env
+travel_agent.db*
+.superdesign/tmp/
+.superdesign/atlas-dark.html
+*.pyc
