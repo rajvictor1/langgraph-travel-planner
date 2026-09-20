@@ -7,8 +7,15 @@ name = "atlas-travel-agent"
 version = "0.1.0"
 description = "Transparent LangGraph travel-planning learning app"
 requires-python = ">=3.12"
+dependencies = [
+  "fastapi>=0.117,<1",
+  "langgraph>=1.0,<2",
+  "pydantic>=2.10,<3",
+]
+
+[tool.setuptools.packages.find]
+include = ["travel_agent*"]
 
 [tool.pytest.ini_options]
 pythonpath = ["."]
 testpaths = ["tests"]
-
